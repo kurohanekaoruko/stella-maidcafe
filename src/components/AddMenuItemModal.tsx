@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { MenuItem } from '../types/game';
 import { useGameStore } from '../store/gameStore';
+import { useToastStore } from './Toast';
 
 interface AddMenuItemModalProps {
   isOpen: boolean;
@@ -66,16 +67,22 @@ export const AddMenuItemModal: React.FC<AddMenuItemModalProps> = ({
 }) => {
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const { saveGame } = useGameStore();
+  const { showToast } = useToastStore();
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     if (selectedItem) {
       onAdd({
         ...selectedItem,
         id: Math.random().toString(36).substr(2, 9),
       });
-      // 添加菜单项后自动保存游戏状态
-      saveGame();
-      onClose();
+      try {
+        await saveGame();
+        showToast('游戏已自动保存');
+        onClose();
+      } catch (error) {
+        showToast('自动保存失败');
+        console.error('保存游戏失败:', error);
+      }
     }
   };
 

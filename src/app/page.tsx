@@ -22,7 +22,7 @@ export default function Dashboard() {
       <GameLoop />
       <div className="p-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-pink-800">仪表盘</h1>
+          <h1 className="text-3xl font-bold text-pink-800">咖啡厅</h1>
           <div className="text-lg text-pink-700">
             第 {day} 天 {formatTime(time)}
           </div>

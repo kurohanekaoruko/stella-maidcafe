@@ -63,7 +63,7 @@ export default function EmployeesPage() {
               <EmployeeCard
                 key={employee.id}
                 employee={employee}
-                onRemove={removeEmployee}
+                onDismiss={() => removeEmployee(employee.id)}
               />
             ))}
           </div>

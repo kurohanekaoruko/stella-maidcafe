@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Employee } from '../types/game';
 import { useGameStore } from '../store/gameStore';
+import maidNames from '../data/maidName.json';
+import { useToastStore } from './Toast';
+import { SHOP_LEVELS } from '../types/game';
 
 interface RecruitModalProps {
   isOpen: boolean;
@@ -9,17 +12,8 @@ interface RecruitModalProps {
 }
 
 const generateRandomEmployee = (): Employee => {
-  // 中文风格名字
-  const chineseNames = ['小樱', '小梅', '小桃', '小兰', '小菊', '小竹', '小松', '小柏', '小荷', '小雪', '小月', '小星', '小云', '小风', '小雨', '小霜', '小露', '小蕾', '小莲', '小蝶'];
-  
-  // 日式风格名字
-  const japaneseNames = ['小百合', '小椿', '小樱花', '小雏', '小葵', '小铃', '小舞', '小凛', '小和', '小爱', '小结', '小叶', '小绘', '小奈', '小惠', '小真', '小琳', '小千', '小织', '小纱'];
-  
-  // 西方风格名字
-  const westernNames = ['爱丽丝', '露西', '艾米丽', '索菲亚', '奥利维亚', '艾玛', '夏洛特', '伊莎贝拉', '维多利亚', '格蕾丝', '莉莉', '艾拉', '米娅', '佐伊', '汉娜', '阿比盖尔', '艾娃', '斯嘉丽', '麦迪逊', '克洛伊'];
-  
   // 合并所有名字并随机选择
-  const allNames = [...chineseNames, ...japaneseNames, ...westernNames];
+  const allNames = [...maidNames.chineseNames, ...maidNames.japaneseNames, ...maidNames.westernNames];
   const name = allNames[Math.floor(Math.random() * allNames.length)];
   
   return {
@@ -41,7 +35,8 @@ export const RecruitModal: React.FC<RecruitModalProps> = ({
   onRecruit,
 }) => {
   const [candidates, setCandidates] = useState<Employee[]>([]);
-  const { saveGame } = useGameStore();
+  const { saveGame, employees, shopLevel } = useGameStore();
+  const { showToast } = useToastStore();
   
   // 生成三个候选女仆
   const generateCandidates = () => {
@@ -63,14 +58,30 @@ export const RecruitModal: React.FC<RecruitModalProps> = ({
     generateCandidates();
   };
 
-  const handleRecruit = (employee: Employee) => {
+  const handleRecruit = async (employee: Employee) => {
+    const currentLevel = SHOP_LEVELS.find(level => level.level === shopLevel);
+    if (!currentLevel) return;
+
+    if (employees.length >= currentLevel.maxEmployees) {
+      showToast(`当前店铺等级最多可雇佣${currentLevel.maxEmployees}名女仆，请先扩张店铺`);
+      return;
+    }
+
     onRecruit(employee);
-    // 招募女仆后自动保存游戏状态
-    saveGame();
-    onClose();
+    try {
+      await saveGame();
+      showToast('游戏已自动保存');
+      onClose();
+    } catch (error) {
+      showToast('自动保存失败');
+      console.error('保存游戏失败:', error);
+    }
   };
 
   if (!isOpen) return null;
+
+  const currentLevel = SHOP_LEVELS.find(level => level.level === shopLevel);
+  const nextLevel = SHOP_LEVELS.find(level => level.level === shopLevel + 1);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
@@ -87,6 +98,19 @@ export const RecruitModal: React.FC<RecruitModalProps> = ({
             刷新候选
           </button>
         </div>
+
+        {currentLevel && (
+          <div className="mb-4 p-3 bg-pink-50 rounded-lg">
+            <p className="text-sm text-pink-800">
+              当前店铺等级：{currentLevel.name}（最多可雇佣{currentLevel.maxEmployees}名女仆）
+            </p>
+            {nextLevel && (
+              <p className="text-sm text-pink-800 mt-1">
+                升级到{nextLevel.name}需要：¥{nextLevel.expansionCost}
+              </p>
+            )}
+          </div>
+        )}
         
         {candidates.length === 0 ? (
           <div className="text-center py-8">
@@ -99,18 +123,18 @@ export const RecruitModal: React.FC<RecruitModalProps> = ({
                 <div key={candidate.id} className="border border-pink-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                   <div className="space-y-3">
                     <div>
-                      <p className="text-gray-600 text-sm">姓名</p>
-                      <p className="text-lg font-semibold">{candidate.name}</p>
+                      <p className="text-gray-700 text-sm font-medium">姓名</p>
+                      <p className="text-lg font-semibold text-pink-800">{candidate.name}</p>
                     </div>
                     <div>
-                      <p className="text-gray-600 text-sm">薪资要求</p>
-                      <p className="text-lg font-semibold">¥{candidate.salary}/天</p>
+                      <p className="text-gray-700 text-sm font-medium">薪资要求</p>
+                      <p className="text-lg font-semibold text-pink-800">¥{candidate.salary}/天</p>
                     </div>
                     <div>
-                      <p className="text-gray-600 text-sm">技能</p>
+                      <p className="text-gray-700 text-sm font-medium">技能</p>
                       <div className="space-y-2">
                         <div>
-                          <p className="text-xs text-gray-600">服务</p>
+                          <p className="text-xs text-gray-700 font-medium">服务</p>
                           <div className="w-full bg-gray-200 rounded-full h-2">
                             <div
                               className="bg-pink-500 h-2 rounded-full"
@@ -119,7 +143,7 @@ export const RecruitModal: React.FC<RecruitModalProps> = ({
                           </div>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-600">烹饪</p>
+                          <p className="text-xs text-gray-700 font-medium">烹饪</p>
                           <div className="w-full bg-gray-200 rounded-full h-2">
                             <div
                               className="bg-pink-500 h-2 rounded-full"
@@ -128,7 +152,7 @@ export const RecruitModal: React.FC<RecruitModalProps> = ({
                           </div>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-600">清洁</p>
+                          <p className="text-xs text-gray-700 font-medium">清洁</p>
                           <div className="w-full bg-gray-200 rounded-full h-2">
                             <div
                               className="bg-pink-500 h-2 rounded-full"

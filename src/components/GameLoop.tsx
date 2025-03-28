@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useGameStore } from '../store/gameStore';
 import { Employee, MenuItem } from '../types/game';
+import { useToastStore } from './Toast';
 
 const GAME_SPEED = 1000; // 1秒 = 1分钟游戏时间
 const DAY_LENGTH = 24 * 60; // 24小时 * 60分钟
@@ -22,6 +23,7 @@ export const GameLoop: React.FC = () => {
     saveGame,
     loadGame,
   } = useGameStore();
+  const { showToast } = useToastStore();
 
   // 组件挂载时加载存档
   useEffect(() => {
@@ -45,7 +47,10 @@ export const GameLoop: React.FC = () => {
         // 结束一天
         nextDay();
         // 每天结束时保存游戏
-        saveGame().catch(err => console.error('保存游戏失败:', err));
+        saveGame().then(() => showToast('游戏已自动保存')).catch(err => {
+          console.error('保存游戏失败:', err);
+          showToast('自动保存失败');
+        });
       } else {
         updateTime(newTime);
       }
@@ -65,16 +70,19 @@ export const GameLoop: React.FC = () => {
     }, GAME_SPEED);
 
     return () => clearInterval(interval);
-  }, [time, day, reputation, employees, menu, money, updateTime, nextDay, updateMoney, updateCustomerCount, updateReputation, saveGame]);
+  }, [time, day, reputation, employees, menu, money, updateTime, nextDay, updateMoney, updateCustomerCount, updateReputation, saveGame, showToast]);
   
   // 游戏状态变化时自动保存（节流版本，避免过于频繁保存）
   useEffect(() => {
     const autoSaveTimeout = setTimeout(() => {
-      saveGame().catch(err => console.error('自动保存失败:', err));
+      saveGame().then(() => showToast('游戏已自动保存')).catch(err => {
+        console.error('自动保存失败:', err);
+        showToast('自动保存失败');
+      });
     }, 10000); // 状态变化10秒后保存
     
     return () => clearTimeout(autoSaveTimeout);
-  }, [money, reputation, employees.length, menu.length, day]);
+  }, [money, reputation, employees.length, menu.length, day, saveGame, showToast]);
 
   // 计算顾客满意度
   const calculateCustomerSatisfaction = () => {
