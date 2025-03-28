@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { MenuItem } from '../types/game';
+import { useGameStore } from '../store/gameStore';
 
 interface AddMenuItemModalProps {
   isOpen: boolean;
@@ -64,6 +65,7 @@ export const AddMenuItemModal: React.FC<AddMenuItemModalProps> = ({
   onAdd,
 }) => {
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
+  const { saveGame } = useGameStore();
 
   const handleAdd = () => {
     if (selectedItem) {
@@ -71,6 +73,8 @@ export const AddMenuItemModal: React.FC<AddMenuItemModalProps> = ({
         ...selectedItem,
         id: Math.random().toString(36).substr(2, 9),
       });
+      // 添加菜单项后自动保存游戏状态
+      saveGame();
       onClose();
     }
   };
@@ -133,4 +137,4 @@ export const AddMenuItemModal: React.FC<AddMenuItemModalProps> = ({
       </div>
     </div>
   );
-}; 
+};

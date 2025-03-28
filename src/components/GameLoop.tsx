@@ -115,5 +115,21 @@ export const GameLoop: React.FC = () => {
     return Math.round(baseSpending);
   };
 
+  // 添加页面关闭/刷新前的自动保存
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      // 直接保存游戏，不显示确认对话框
+      saveGame().catch(err => console.error('离开页面前保存失败:', err));
+    };
+    
+    // 添加事件监听器
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    // 组件卸载时移除事件监听器
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [saveGame]);
+  
   return null; // 这是一个逻辑组件，不需要渲染UI
 };

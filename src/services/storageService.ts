@@ -23,11 +23,21 @@ const initDB = (): Promise<IDBDatabase> => {
     };
     
     request.onsuccess = (event) => {
+      if (!event || !event.target) {
+        console.error('IndexedDB事件目标为空');
+        reject('IndexedDB事件目标为空');
+        return;
+      }
       const db = (event.target as IDBOpenDBRequest).result;
       resolve(db);
     };
     
     request.onupgradeneeded = (event) => {
+      if (!event || !event.target) {
+        console.error('IndexedDB升级事件目标为空');
+        reject('IndexedDB升级事件目标为空');
+        return;
+      }
       const db = (event.target as IDBOpenDBRequest).result;
       // 创建存储对象存储区
       if (!db.objectStoreNames.contains(STORE_NAME)) {
@@ -58,11 +68,21 @@ export const saveGame = async (gameState: GameState, saveName: string = DEFAULT_
     
     return new Promise((resolve, reject) => {
       request.onsuccess = () => {
+        if (!request) {
+          console.error('saveGame: IndexedDB请求对象为空');
+          reject('IndexedDB请求对象为空');
+          return;
+        }
         console.log('游戏已保存');
         resolve();
       };
       
       request.onerror = () => {
+        if (!request) {
+          console.error('saveGame: IndexedDB请求对象为空');
+          reject('IndexedDB请求对象为空');
+          return;
+        }
         console.error('保存游戏失败:', request.error);
         reject('保存游戏失败');
       };
@@ -91,6 +111,11 @@ export const loadGame = async (saveName: string = DEFAULT_SAVE_KEY): Promise<Gam
     
     return new Promise((resolve, reject) => {
       request.onsuccess = () => {
+        if (!request) {
+          console.error('IndexedDB请求对象为空');
+          reject('IndexedDB请求对象为空');
+          return;
+        }
         const savedData = request.result;
         if (savedData) {
           // 移除保存时间戳，返回纯游戏状态
@@ -131,11 +156,21 @@ export const clearSave = async (saveName: string = DEFAULT_SAVE_KEY): Promise<vo
     
     return new Promise((resolve, reject) => {
       request.onsuccess = () => {
+        if (!request) {
+          console.error('clearSave: IndexedDB请求对象为空');
+          reject('IndexedDB请求对象为空');
+          return;
+        }
         console.log('游戏存档已清空');
         resolve();
       };
       
       request.onerror = () => {
+        if (!request) {
+          console.error('clearSave: IndexedDB请求对象为空');
+          reject('IndexedDB请求对象为空');
+          return;
+        }
         console.error('清空游戏存档失败:', request.error);
         reject('清空游戏存档失败');
       };
@@ -163,6 +198,11 @@ export const getAllSaves = async (): Promise<{key: string, data: GameState & {sa
     
     return new Promise((resolve, reject) => {
       request.onsuccess = async () => {
+        if (!request) {
+          console.error('getAllSaves: IndexedDB请求对象为空');
+          reject('IndexedDB请求对象为空');
+          return;
+        }
         const keys = request.result as string[];
         const saves: {key: string, data: GameState & {savedAt: string}}[] = [];
         
@@ -170,6 +210,11 @@ export const getAllSaves = async (): Promise<{key: string, data: GameState & {sa
           const getRequest = store.get(key);
           await new Promise<void>((innerResolve) => {
             getRequest.onsuccess = () => {
+              if (!getRequest) {
+                console.error('getAllSaves: 获取存档请求对象为空');
+                innerResolve();
+                return;
+              }
               saves.push({
                 key,
                 data: getRequest.result

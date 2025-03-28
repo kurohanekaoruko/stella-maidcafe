@@ -54,7 +54,7 @@ export const useGameStore = create<GameStore>()((set, get) => ({
     })),
   updateReputation: (amount: number) =>
     set((state: GameState) => ({
-      reputation: Math.max(0, Math.min(100, state.reputation + amount)),
+      reputation: Math.round(Math.max(0, Math.min(100, state.reputation + amount))),
     })),
   updateCustomerCount: (amount: number) =>
     set((state: GameState) => ({

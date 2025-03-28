@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Layout } from '../../components/Layout';
 import { useGameStore } from '../../store/gameStore';
 import { MenuItemCard } from '../../components/MenuItemCard';
@@ -13,9 +13,15 @@ export default function MenuPage() {
     menu,
     addMenuItem,
     removeMenuItem,
+    loadGame
   } = useGameStore();
 
   const [isAddMenuItemModalOpen, setIsAddMenuItemModalOpen] = useState(false);
+
+  // 在组件挂载时加载游戏状态，解决页面刷新后菜单不显示的问题
+  useEffect(() => {
+    loadGame();
+  }, []);
 
   const menuStats = calculateMenuStats(menu);
 
@@ -75,4 +81,4 @@ export default function MenuPage() {
       />
     </Layout>
   );
-} 
+}

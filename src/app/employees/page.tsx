@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Layout } from '../../components/Layout';
 import { useGameStore } from '../../store/gameStore';
 import { EmployeeCard } from '../../components/EmployeeCard';
@@ -13,9 +13,15 @@ export default function EmployeesPage() {
     employees,
     addEmployee,
     removeEmployee,
+    loadGame
   } = useGameStore();
 
   const [isRecruitModalOpen, setIsRecruitModalOpen] = useState(false);
+
+  // 在组件挂载时加载游戏状态，解决页面刷新后女仆不显示的问题
+  useEffect(() => {
+    loadGame();
+  }, []);
 
   const avgSkills = calculateEmployeeAverageSkills(employees);
 
