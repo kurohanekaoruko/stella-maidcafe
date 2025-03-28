@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { SaveManager } from './SaveManager';
+import { Toast } from './Toast';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -43,6 +44,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         {children}
         <SaveManager />
       </div>
+      
+      {/* 全局Toast提示 */}
+      <Toast />
     </div>
   );
 };

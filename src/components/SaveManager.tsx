@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useGameStore } from '../store/gameStore';
 import { SavesList } from './SavesList';
+import { useToastStore } from './Toast';
 
 export const SaveManager: React.FC = () => {
   const { saveGame, loadGame, clearSave, resetGame } = useGameStore();
+  const { showToast } = useToastStore();
   const [isOpen, setIsOpen] = useState(false);
-  const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showSavesList, setShowSavesList] = useState(false);
 
@@ -13,9 +14,9 @@ export const SaveManager: React.FC = () => {
     try {
       setIsLoading(true);
       await saveGame();
-      showMessage('游戏已保存');
+      showToast('游戏已保存');
     } catch (error) {
-      showMessage('保存失败: ' + error);
+      showToast('保存失败: ' + error);
     } finally {
       setIsLoading(false);
     }
@@ -25,9 +26,9 @@ export const SaveManager: React.FC = () => {
     try {
       setIsLoading(true);
       await loadGame();
-      showMessage('游戏已加载');
+      showToast('游戏已加载');
     } catch (error) {
-      showMessage('加载失败: ' + error);
+      showToast('加载失败: ' + error);
     } finally {
       setIsLoading(false);
     }
@@ -38,9 +39,9 @@ export const SaveManager: React.FC = () => {
       try {
         setIsLoading(true);
         await clearSave();
-        showMessage('存档已清空');
+        showToast('存档已清空');
       } catch (error) {
-        showMessage('清空存档失败: ' + error);
+        showToast('清空存档失败: ' + error);
       } finally {
         setIsLoading(false);
       }
@@ -50,14 +51,11 @@ export const SaveManager: React.FC = () => {
   const handleReset = () => {
     if (window.confirm('确定要重置游戏吗？当前进度将丢失！')) {
       resetGame();
-      showMessage('游戏已重置');
+      showToast('游戏已重置');
     }
   };
 
-  const showMessage = (msg: string) => {
-    setMessage(msg);
-    setTimeout(() => setMessage(''), 3000);
-  };
+
 
   return (
     <div className="relative">
@@ -131,11 +129,7 @@ export const SaveManager: React.FC = () => {
             </div>
           )}
           
-          {message && (
-            <div className="mt-3 p-2 bg-gray-100 text-center rounded text-sm">
-              {message}
-            </div>
-          )}
+
         </div>
       )}
       

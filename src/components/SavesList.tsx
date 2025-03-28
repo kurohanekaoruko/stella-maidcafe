@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getAllSaves } from '../services/storageService';
 import { GameState } from '../types/game';
 import { useGameStore } from '../store/gameStore';
+import { useToastStore } from './Toast';
 
 interface SaveItem {
   key: string;
@@ -11,8 +12,8 @@ interface SaveItem {
 export const SavesList: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [saves, setSaves] = useState<SaveItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
   const { loadGame } = useGameStore();
+  const { showToast } = useToastStore();
 
   useEffect(() => {
     const fetchSaves = async () => {
@@ -21,7 +22,7 @@ export const SavesList: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         const allSaves = await getAllSaves();
         setSaves(allSaves);
       } catch (err) {
-        setError('获取存档列表失败');
+        showToast('获取存档列表失败');
         console.error('获取存档列表失败:', err);
       } finally {
         setIsLoading(false);
@@ -45,9 +46,10 @@ export const SavesList: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const handleLoadSave = async (key: string) => {
     try {
       await loadGame(key);
+      showToast('游戏已加载');
       onClose();
     } catch (err) {
-      setError('加载存档失败');
+      showToast('加载存档失败');
       console.error('加载存档失败:', err);
     }
   };
@@ -60,13 +62,7 @@ export const SavesList: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="p-4 text-center text-red-500">
-        <p>{error}</p>
-      </div>
-    );
-  }
+
 
   if (saves.length === 0) {
     return (
