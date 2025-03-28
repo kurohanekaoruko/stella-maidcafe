@@ -13,13 +13,30 @@ export const GameLoop: React.FC = () => {
     reputation,
     employees,
     menu,
+    money,
     updateTime,
     nextDay,
     updateMoney,
     updateCustomerCount,
     updateReputation,
+    saveGame,
+    loadGame,
   } = useGameStore();
 
+  // 组件挂载时加载存档
+  useEffect(() => {
+    const loadSavedGame = async () => {
+      try {
+        await loadGame();
+      } catch (error) {
+        console.error('加载存档失败:', error);
+      }
+    };
+    
+    loadSavedGame();
+  }, []);
+
+  // 游戏循环
   useEffect(() => {
     const interval = setInterval(() => {
       // 更新时间
@@ -27,6 +44,8 @@ export const GameLoop: React.FC = () => {
       if (newTime >= DAY_LENGTH) {
         // 结束一天
         nextDay();
+        // 每天结束时保存游戏
+        saveGame().catch(err => console.error('保存游戏失败:', err));
       } else {
         updateTime(newTime);
       }
@@ -46,13 +65,22 @@ export const GameLoop: React.FC = () => {
     }, GAME_SPEED);
 
     return () => clearInterval(interval);
-  }, [time, day, employees, menu]);
+  }, [time, day, reputation, employees, menu, money, updateTime, nextDay, updateMoney, updateCustomerCount, updateReputation, saveGame]);
+  
+  // 游戏状态变化时自动保存（节流版本，避免过于频繁保存）
+  useEffect(() => {
+    const autoSaveTimeout = setTimeout(() => {
+      saveGame().catch(err => console.error('自动保存失败:', err));
+    }, 10000); // 状态变化10秒后保存
+    
+    return () => clearTimeout(autoSaveTimeout);
+  }, [money, reputation, employees.length, menu.length, day]);
 
   // 计算顾客满意度
   const calculateCustomerSatisfaction = () => {
     let satisfaction = 50; // 基准满意度
 
-    // 根据员工技能计算满意度
+    // 根据女仆技能计算满意度
     if (employees.length > 0) {
       const avgService = employees.reduce((sum: number, emp: Employee) => sum + emp.skills.service, 0) / employees.length;
       const avgCooking = employees.reduce((sum: number, emp: Employee) => sum + emp.skills.cooking, 0) / employees.length;
@@ -88,4 +116,4 @@ export const GameLoop: React.FC = () => {
   };
 
   return null; // 这是一个逻辑组件，不需要渲染UI
-}; 
+};

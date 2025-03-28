@@ -40,9 +40,9 @@ export default function StatsPage() {
           </div>
         </div>
 
-        {/* 员工分析 */}
+        {/* 女仆分析 */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-          <h2 className="text-xl font-semibold text-pink-800 mb-4">员工分析</h2>
+          <h2 className="text-xl font-semibold text-pink-800 mb-4">女仆分析</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <p className="text-gray-600">总薪资支出</p>
@@ -95,4 +95,4 @@ export default function StatsPage() {
       </div>
     </Layout>
   );
-} 
+}

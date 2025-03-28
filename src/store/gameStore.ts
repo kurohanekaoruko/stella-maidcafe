@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { GameState, Employee, MenuItem } from '../types/game';
+import { saveGame, loadGame, clearSave } from '../services/storageService';
 
 interface GameStore extends GameState {
   addEmployee: (employee: Employee) => void;
@@ -11,6 +12,10 @@ interface GameStore extends GameState {
   updateCustomerCount: (amount: number) => void;
   nextDay: () => void;
   updateTime: (time: number) => void;
+  saveGame: () => Promise<void>;
+  loadGame: (saveName?: string) => Promise<void>;
+  resetGame: () => void;
+  clearSave: () => Promise<void>;
 }
 
 const initialState: GameState = {
@@ -23,7 +28,7 @@ const initialState: GameState = {
   time: 0,
 };
 
-export const useGameStore = create<GameStore>()((set) => ({
+export const useGameStore = create<GameStore>()((set, get) => ({
   ...initialState,
   addEmployee: (employee: Employee) =>
     set((state: GameState) => ({
@@ -64,4 +69,30 @@ export const useGameStore = create<GameStore>()((set) => ({
     set(() => ({
       time: time,
     })),
-})); 
+  saveGame: async () => {
+    const state = get();
+    const gameState: GameState = {
+      money: state.money,
+      reputation: state.reputation,
+      customerCount: state.customerCount,
+      employees: state.employees,
+      menu: state.menu,
+      day: state.day,
+      time: state.time,
+    };
+    await saveGame(gameState);
+  },
+  loadGame: async (saveName?: string) => {
+    const savedState = await loadGame(saveName);
+    if (savedState) {
+      set(savedState);
+    }
+  },
+  resetGame: () => {
+    set(initialState);
+  },
+  clearSave: async () => {
+    await clearSave();
+    set(initialState);
+  },
+}));

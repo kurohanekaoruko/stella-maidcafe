@@ -7,7 +7,7 @@ export const formatTime = (minutes: number): string => {
   return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
 };
 
-// 计算员工平均技能
+// 计算女仆平均技能
 export const calculateEmployeeAverageSkills = (employees: Employee[]) => {
   if (employees.length === 0) {
     return {
@@ -76,7 +76,7 @@ export const calculateBusinessStats = (
     totalCost: menuStats.totalCost,
     totalProfit: menuStats.totalProfit,
     
-    // 员工相关
+    // 女仆相关
     totalSalary: employees.reduce((sum, emp) => sum + emp.salary, 0),
     avgServiceSkill: employeeSkills.service,
     avgCookingSkill: employeeSkills.cooking,
@@ -90,4 +90,4 @@ export const calculateBusinessStats = (
     customerSatisfaction: Math.round((reputation + 50) * 10) / 10,
     day,
   };
-}; 
+};

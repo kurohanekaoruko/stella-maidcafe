@@ -18,7 +18,7 @@ export const EmployeeCard: React.FC<EmployeeCardProps> = ({ employee, onRemove }
           onClick={() => onRemove(employee.id)}
           className="text-red-500 hover:text-red-700"
         >
-          解雇
+          辞退
         </button>
       </div>
       
@@ -56,4 +56,4 @@ export const EmployeeCard: React.FC<EmployeeCardProps> = ({ employee, onRemove }
       </div>
     </div>
   );
-}; 
+};

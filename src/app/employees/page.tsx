@@ -23,20 +23,20 @@ export default function EmployeesPage() {
     <Layout>
       <div className="p-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-pink-800">员工管理</h1>
+          <h1 className="text-3xl font-bold text-pink-800">女仆管理</h1>
           <button
             onClick={() => setIsRecruitModalOpen(true)}
             className="bg-pink-500 text-white px-6 py-2 rounded hover:bg-pink-600"
             disabled={employees.length >= 3}
           >
-            招募新员工
+            招募新女仆
           </button>
         </div>
 
-        {/* 员工统计 */}
+        {/* 女仆统计 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow-lg p-6">
-            <h3 className="text-lg font-semibold text-gray-600 mb-2">当前员工数</h3>
+            <h3 className="text-lg font-semibold text-gray-600 mb-2">当前女仆数</h3>
             <p className="text-3xl font-bold text-pink-800">{employees.length}/3</p>
           </div>
           <div className="bg-white rounded-lg shadow-lg p-6">
@@ -49,9 +49,9 @@ export default function EmployeesPage() {
           </div>
         </div>
 
-        {/* 员工列表 */}
+        {/* 女仆列表 */}
         <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-semibold text-pink-800 mb-4">员工列表</h2>
+          <h2 className="text-xl font-semibold text-pink-800 mb-4">女仆列表</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {employees.map((employee: Employee) => (
               <EmployeeCard
@@ -64,7 +64,7 @@ export default function EmployeesPage() {
         </div>
       </div>
 
-      {/* 招募员工模态框 */}
+      {/* 招募女仆模态框 */}
       <RecruitModal
         isOpen={isRecruitModalOpen}
         onClose={() => setIsRecruitModalOpen(false)}
@@ -72,4 +72,4 @@ export default function EmployeesPage() {
       />
     </Layout>
   );
-} 
+}

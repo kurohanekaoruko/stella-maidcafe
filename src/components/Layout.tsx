@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { SaveManager } from './SaveManager';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -10,7 +11,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const navItems = [
     { path: '/', label: '仪表盘' },
-    { path: '/employees', label: '员工管理' },
+    { path: '/employees', label: '女仆管理' },
     { path: '/menu', label: '菜单管理' },
     { path: '/stats', label: '经营数据' },
   ];
@@ -40,7 +41,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       {/* 主内容区 */}
       <div className="ml-64">
         {children}
+        <SaveManager />
       </div>
     </div>
   );
-}; 
+};

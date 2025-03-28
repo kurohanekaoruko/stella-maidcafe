@@ -47,16 +47,16 @@ export const RecruitModal: React.FC<RecruitModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
       <div className="bg-white rounded-lg p-6 max-w-md w-full">
-        <h2 className="text-2xl font-semibold text-pink-800 mb-4">招募新员工</h2>
+        <h2 className="text-2xl font-semibold text-pink-800 mb-4">招募新女仆</h2>
         
         {!employee ? (
           <div className="text-center">
-            <p className="text-gray-600 mb-4">点击下方按钮生成应聘者信息</p>
+            <p className="text-gray-600 mb-4">点击下方按钮生成女仆应聘信息</p>
             <button
               onClick={handleGenerate}
               className="bg-pink-500 text-white px-6 py-2 rounded hover:bg-pink-600"
             >
-              生成应聘者
+              生成应聘女仆
             </button>
           </div>
         ) : (
@@ -123,4 +123,4 @@ export const RecruitModal: React.FC<RecruitModalProps> = ({
       </div>
     </div>
   );
-}; 
+};

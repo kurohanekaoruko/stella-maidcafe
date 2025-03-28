@@ -42,7 +42,7 @@ export default function Dashboard() {
             <p className="text-3xl font-bold text-pink-800">{customerCount}</p>
           </div>
           <div className="bg-white rounded-lg shadow-lg p-6">
-            <h3 className="text-lg font-semibold text-gray-600 mb-2">员工数量</h3>
+            <h3 className="text-lg font-semibold text-gray-600 mb-2">女仆数量</h3>
             <p className="text-3xl font-bold text-pink-800">{employees.length}/3</p>
           </div>
         </div>
@@ -56,7 +56,7 @@ export default function Dashboard() {
                 href="/employees"
                 className="block w-full bg-pink-500 text-white px-4 py-2 rounded text-center hover:bg-pink-600"
               >
-                管理员工
+                管理女仆
               </a>
               <a
                 href="/menu"
